@@ -12,10 +12,10 @@ require_relative 'kubernetes_client'
 
 Mail.defaults do
   delivery_method :smtp,
-                  address: ENV['EMAIL_SMTP_HOST'],
-                  port: ENV['EMAIL_SMTP_PORT'],
-                  user_name: ENV['EMAIL_SMTP_USERNAME'],
-                  password: ENV['EMAIL_SMTP_PASSWORD']
+                  address: ENV.fetch('EMAIL_SMTP_HOST', nil),
+                  port: ENV.fetch('EMAIL_SMTP_PORT', nil),
+                  user_name: ENV.fetch('EMAIL_SMTP_USERNAME', nil),
+                  password: ENV.fetch('EMAIL_SMTP_PASSWORD', nil)
 end
 
 class Controller
@@ -24,8 +24,8 @@ class Controller
   def initialize
     @logger = Logger.new($stdout)
 
-    @slack_notifier = Slack::Notifier.new(ENV['SLACK_WEBHOOK']) do
-      defaults channel: ENV['SLACK_CHANNEL'], username: ENV.fetch('SLACK_USERNAME', 'Velero')
+    @slack_notifier = Slack::Notifier.new(ENV.fetch('SLACK_WEBHOOK', nil)) do
+      defaults channel: ENV.fetch('SLACK_CHANNEL', nil), username: ENV.fetch('SLACK_USERNAME', 'Velero')
     end
 
     @velero_namespace = ENV.fetch('VELERO_NAMESPACE', 'velero')
@@ -97,8 +97,8 @@ class Controller
     return unless ENV.fetch('ENABLE_EMAIL_NOTIFICATIONS', 'false') =~ /true/i
 
     mail = Mail.new do
-      from    ENV['EMAIL_FROM_ADDRESS']
-      to      ENV['EMAIL_TO_ADDRESS']
+      from    ENV.fetch('EMAIL_FROM_ADDRESS', nil)
+      to      ENV.fetch('EMAIL_TO_ADDRESS', nil)
       subject notification
       body    "Run `velero #{event.resource.kind.downcase} describe #{event.resource.metadata.name} --details` for more information."
     end

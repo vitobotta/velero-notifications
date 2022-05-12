@@ -1,6 +1,6 @@
 # velero-backup-notification
 
-This is a simple Kubernetes controller written in Ruby that sends email and/or Slack notifications when backups or restores are performed by [Velero](https://velero.io/).
+This is a simple Kubernetes controller written in Ruby that sends email and/or Slack notifications when backups or restores are performed by [Velero](https://velero.io/) in a [Kubernetes](https://kubernetes.io/) cluster.
 
 ## Installation
 
@@ -26,4 +26,4 @@ helm install ./helm \
   --set email.to_address=... \
 ```
 
-That's it! You should now receive notifications when a backup/restore is started and when it's completed.
+That's it! You should now receive notifications when a backup/restore is completed or fails.

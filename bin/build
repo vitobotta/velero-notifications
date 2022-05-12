@@ -1,0 +1,9 @@
+#!/bin/bash
+
+IMAGE="vitobotta/velero-backup-notification"
+VERSION="v"`date +%s`""
+
+docker build --platform=linux/amd64 -t ${IMAGE}:${VERSION} .
+
+docker push ${IMAGE}:${VERSION}
+

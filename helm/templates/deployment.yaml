@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: velero-backup-notification
+  namespace: velero
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: velero-backup-notification
+  template:
+    metadata:
+      labels:
+        app: velero-backup-notification
+    spec:
+      serviceAccountName: velero
+      containers:
+        - name: velero-backup-notification
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: VELERO_NAMESPACE
+              value: {{ .Values.velero_namespace | quote }}
+            - name: NOTIFICATION_PREFIX
+              value: {{ .Values.notification_prefix | quote }}
+            - name: ENABLE_SLACK_NOTIFICATIONS
+              value: {{ .Values.slack.enabled | quote }}
+            - name: SLACK_USERNAME
+              value: {{ .Values.slack.username | quote }}
+            - name: SLACK_WEBHOOK
+              valueFrom:
+                secretKeyRef:
+                  key: slack_webhook
+                  name: velero-backup-notification-secrets
+            - name: SLACK_CHANNEL
+              valueFrom:
+                secretKeyRef:
+                  key: slack_channel
+                  name: velero-backup-notification-secrets
+            - name: ENABLE_EMAIL_NOTIFICATIONS
+              value: {{ .Values.email.enabled | quote }}
+            - name: EMAIL_FROM_ADDRESS
+              value: {{ .Values.email.from_address | quote }}
+            - name: EMAIL_TO_ADDRESS
+              value: {{ .Values.email.to_address | quote }}
+            - name: EMAIL_SMTP_HOST
+              valueFrom:
+                secretKeyRef:
+                  key: email_smtp_host
+                  name: velero-backup-notification-secrets
+            - name: EMAIL_SMTP_PORT
+              valueFrom:
+                secretKeyRef:
+                  key: email_smtp_port
+                  name: velero-backup-notification-secrets
+            - name: EMAIL_SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: email_smtp_username
+                  name: velero-backup-notification-secrets
+            - name: EMAIL_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: email_smtp_password
+                  name: velero-backup-notification-secrets

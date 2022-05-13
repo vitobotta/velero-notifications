@@ -30,4 +30,4 @@ That's it! You should now receive notifications when a backup/restore is complet
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The project is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

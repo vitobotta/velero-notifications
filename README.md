@@ -27,3 +27,7 @@ helm install ./helm \
 ```
 
 That's it! You should now receive notifications when a backup/restore is completed or fails.
+
+## License
+
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

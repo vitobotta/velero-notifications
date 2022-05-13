@@ -1,4 +1,4 @@
-# velero-backup-notification
+# velero-notifications
 
 This is a simple Kubernetes controller written in Ruby that sends email and/or Slack notifications when backups or restores are performed by [Velero](https://velero.io/) in a [Kubernetes](https://kubernetes.io/) cluster.
 

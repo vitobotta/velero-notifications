@@ -7,6 +7,8 @@ require 'concurrent'
 require 'logger'
 require 'yaml'
 require 'mail'
+require 'uri'
+require 'net/http'
 
 require_relative 'kubernetes_client'
 
@@ -56,6 +58,8 @@ class Controller
 
     logger.info notification
 
+    send_webhook_notification(event: event, notification: notification)
+
     send_slack_notification(event: event, notification: notification)
 
     send_email_notification(event: event, notification: notification)
@@ -90,7 +94,24 @@ class Controller
 
     slack_notifier.post at: at, attachments: [attachment]
   rescue StandardError => e
-    logger.error "Something went wrong with the Slack notification: #{e.notification}"
+    logger.error "Something went wrong with the Slack notification: #{e.message}"
+  end
+
+  def send_webhook_notification(event:, notification:)
+    phase = event.resource.status.phase
+
+    return unless send_webhook_notification?(phase)
+
+    url = ENV.fetch('WEBHOOK_URL', nil)
+
+    raise 'No webhook URL specified' if url.nil?
+
+    uri = URI(url)
+    res = Net::HTTP.get_response(uri)
+
+    raise 'Wenbhook request resulted in a non 20x status code' unless res.is_a?(Net::HTTPSuccess)
+  rescue StandardError => e
+    logger.error "Something went wrong with the webhook notification: #{e.message}"
   end
 
   def send_email_notification(event:, notification:)
@@ -107,7 +128,7 @@ class Controller
 
     mail.deliver!
   rescue StandardError => e
-    logger.error "Something went wrong with the email notification: #{e.notification}"
+    logger.error "Something went wrong with the email notification: #{e.message}"
   end
 
   def send_slack_notification?(phase)
@@ -122,6 +143,14 @@ class Controller
     enabled = ENV.fetch('ENABLE_EMAIL_NOTIFICATIONS', 'false').downcase == 'true'
     succeeded = (phase =~ /failed/i).nil?
     failures_only = ENV.fetch('EMAIL_FAILURES_ONLY', 'false').downcase == 'true'
+
+    enabled && (!failures_only || !(failures_only && succeeded))
+  end
+
+  def send_webhook_notification?(phase)
+    enabled = ENV.fetch('ENABLE_WEBHOOK_NOTIFICATIONS', 'false').downcase == 'true'
+    succeeded = (phase =~ /failed/i).nil?
+    failures_only = ENV.fetch('WEBHOOK_FAILURES_ONLY', 'false').downcase == 'true'
 
     enabled && (!failures_only || !(failures_only && succeeded))
   end

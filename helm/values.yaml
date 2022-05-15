@@ -1,16 +1,16 @@
 image:
   repository: vitobotta/velero-backup-notification
-  tag: v1652607274
+  tag: v1652608230
 
 slack:
-  enabled: true
+  enabled: false
   failures_only: true
   webhook: "https://...."
   channel: "stuff"
   username: Velero
 
 email:
-  enabled: true
+  enabled: false
   failures_only: true
   smtp:
     host: some-smtp-host.com
@@ -19,6 +19,12 @@ email:
     password: blah
   from_address: from@email.com
   to_address: to@email.com
+
+
+webhook:
+  enabled: false
+  failures_only: false
+  url: "https://...."
 
 velero_namespace: velero
 

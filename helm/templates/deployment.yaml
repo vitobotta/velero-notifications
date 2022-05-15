@@ -67,3 +67,12 @@ spec:
                 secretKeyRef:
                   key: email_smtp_password
                   name: velero-backup-notification-secrets
+            - name: ENABLE_WEBHOOK_NOTIFICATIONS
+              value: {{ .Values.webhook.enabled | quote }}
+            - name: WEBHOOK_FAILURES_ONLY
+              value: {{ .Values.webhook.failures_only | quote }}
+            - name: WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  key: webhook_url
+                  name: velero-backup-notification-secrets

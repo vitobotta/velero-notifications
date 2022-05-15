@@ -25,6 +25,8 @@ spec:
               value: {{ .Values.notification_prefix | quote }}
             - name: ENABLE_SLACK_NOTIFICATIONS
               value: {{ .Values.slack.enabled | quote }}
+            - name: SLACK_FAILURES_ONLY
+              value: {{ .Values.slack.failures_only | quote }}
             - name: SLACK_USERNAME
               value: {{ .Values.slack.username | quote }}
             - name: SLACK_WEBHOOK
@@ -39,6 +41,8 @@ spec:
                   name: velero-backup-notification-secrets
             - name: ENABLE_EMAIL_NOTIFICATIONS
               value: {{ .Values.email.enabled | quote }}
+            - name: EMAIL_FAILURES_ONLY
+              value: {{ .Values.email.failures_only | quote }}
             - name: EMAIL_FROM_ADDRESS
               value: {{ .Values.email.from_address | quote }}
             - name: EMAIL_TO_ADDRESS

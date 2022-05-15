@@ -76,9 +76,9 @@ class Controller
   end
 
   def send_slack_notification(event:, notification:)
-    return unless ENV.fetch('ENABLE_SLACK_NOTIFICATIONS', 'false') =~ /true/i
-
     phase = event.resource.status.phase
+
+    return unless send_slack_notification?(phase)
 
     at = phase =~ /failed/i ? [:here] : []
 
@@ -94,7 +94,9 @@ class Controller
   end
 
   def send_email_notification(event:, notification:)
-    return unless ENV.fetch('ENABLE_EMAIL_NOTIFICATIONS', 'false') =~ /true/i
+    phase = event.resource.status.phase
+
+    return unless send_email_notification?(phase)
 
     mail = Mail.new do
       from    ENV.fetch('EMAIL_FROM_ADDRESS', nil)
@@ -106,5 +108,21 @@ class Controller
     mail.deliver!
   rescue StandardError => e
     logger.error "Something went wrong with the email notification: #{e.notification}"
+  end
+
+  def send_slack_notification?(phase)
+    enabled = ENV.fetch('ENABLE_SLACK_NOTIFICATIONS', 'false').downcase == 'true'
+    succeeded = (phase =~ /failed/i).nil?
+    failures_only = ENV.fetch('SLACK_FAILURES_ONLY', 'false').downcase == 'true'
+
+    enabled && (!failures_only || !(failures_only && succeeded))
+  end
+
+  def send_email_notification?(phase)
+    enabled = ENV.fetch('ENABLE_EMAIL_NOTIFICATIONS', 'false').downcase == 'true'
+    succeeded = (phase =~ /failed/i).nil?
+    failures_only = ENV.fetch('EMAIL_FAILURES_ONLY', 'false').downcase == 'true'
+
+    enabled && (!failures_only || !(failures_only && succeeded))
   end
 end

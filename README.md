@@ -14,16 +14,18 @@ helm install ./helm \
   --set velero_namespace=velero \
   --set notification_prefix="[Velero]"
   --set slack.enabled=true \
+  --set slack.failures_only=true \
   --set slack.webhook=https://... \
   --set slack.channel=velero \
   --set slack.username=Velero \
   --set email.enabled=true \
+  --set email.failures_only=true \
   --set email.smtp.host=... \
   --set email.smtp.port=587 \
   --set email.smtp.username=... \
   --set email.smtp.password=... \
   --set email.from_address=... \
-  --set email.to_address=... \
+  --set email.to_address=...
 ```
 
 That's it! You should now receive notifications when a backup/restore is completed or fails.

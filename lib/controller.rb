@@ -39,6 +39,9 @@ class Controller
   def start
     $stdout.sync = true
 
+    resource_version[:backups] = kubernetes_client.api('velero.io/v1').resource("backups", namespace: velero_namespace).meta_list.metadata.resourceVersion
+    resource_version[:restores] = kubernetes_client.api('velero.io/v1').resource("restores", namespace: velero_namespace).meta_list.metadata.resourceVersion
+
     t1 = Thread.new { watch_resources :backups }
     t2 = Thread.new { watch_resources :restores }
 
@@ -53,7 +56,7 @@ class Controller
   def notify(event)
     phase = event.resource.status.phase
 
-    return if phase.empty? || phase == 'Deleting' || phase == 'InProgress'
+    return if phase.nil? || phase.empty? || phase == 'Deleting' || phase == 'InProgress'
 
     notification = "#{notification_prefix} #{event.resource.kind} #{event.resource.metadata.name} #{phase}"
 
@@ -67,11 +70,9 @@ class Controller
   end
 
   def watch_resources(resource_type)
-    resource_version[resource_type] ||= kubernetes_client.api('velero.io/v1').resource(resource_type.to_s, namespace: velero_namespace).meta_list.metadata.resourceVersion
-
     logger.info "Watching #{resource_type}..."
 
-    kubernetes_client.api('velero.io/v1').resource(resource_type.to_s, namespace: velero_namespace).watch(timeout: TIMEOUT, resourceVersion: resource_version) do |event|
+    kubernetes_client.api('velero.io/v1').resource(resource_type.to_s, namespace: velero_namespace).watch(timeout: TIMEOUT, resourceVersion: resource_version[resource_type]) do |event|
       notify event
       resource_version[resource_type] = event.resource.metadata.resourceVersion
     end

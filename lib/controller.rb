@@ -33,6 +33,7 @@ class Controller
     @velero_namespace = ENV.fetch('VELERO_NAMESPACE', 'velero')
     @kubernetes_client = Kubernetes::Client.new
     @notification_prefix = ENV.fetch('NOTIFICATION_PREFIX', '[Velero]')
+    @resource_version = {}
   end
 
   def start
@@ -47,7 +48,7 @@ class Controller
 
   private
 
-  attr_reader :logger, :slack_notifier, :velero_namespace, :kubernetes_client, :notification_prefix
+  attr_reader :logger, :slack_notifier, :velero_namespace, :kubernetes_client, :notification_prefix, :resource_version
 
   def notify(event)
     phase = event.resource.status.phase
@@ -66,13 +67,13 @@ class Controller
   end
 
   def watch_resources(resource_type)
-    resource_version = kubernetes_client.api('velero.io/v1').resource(resource_type.to_s, namespace: velero_namespace).meta_list.metadata.resourceVersion
+    resource_version[resource_type] ||= kubernetes_client.api('velero.io/v1').resource(resource_type.to_s, namespace: velero_namespace).meta_list.metadata.resourceVersion
 
     logger.info "Watching #{resource_type}..."
 
     kubernetes_client.api('velero.io/v1').resource(resource_type.to_s, namespace: velero_namespace).watch(timeout: TIMEOUT, resourceVersion: resource_version) do |event|
-      resource_version = event.resource.metadata.resourceVersion
       notify event
+      resource_version[resource_type] = event.resource.metadata.resourceVersion
     end
   rescue EOFError, Excon::Error::Socket
     logger.info 'Reconnecting to API...'

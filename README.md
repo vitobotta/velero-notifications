@@ -8,13 +8,12 @@ This is a simple Kubernetes controller written in Ruby that sends email/Slack/we
 - Install with Helm
 
 ```bash
-helm install ./helm \
-  --name velero-backup-notification \
+helm upgrade --install \
   --namespace velero \
   --set velero_namespace=velero \
-  --set notification_prefix="[Velero]"
+  --set notification_prefix="[Velero]" \
   --set slack.enabled=true \
-  --set slack.failures_only=true \
+  --set slack.failures_only=false \
   --set slack.webhook=https://... \
   --set slack.channel=velero \
   --set slack.username=Velero \
@@ -28,7 +27,8 @@ helm install ./helm \
   --set email.to_address=...
   --set webhook.enabled=true \
   --set webhook.failures_only=false \
-  --set webhook.url=https://...
+  --set webhook.url=https://... \
+  velero-backup-notification ./helm
 ```
 
 That's it! You should now receive notifications when a backup/restore is completed or fails.
@@ -37,7 +37,7 @@ That's it! You should now receive notifications when a backup/restore is complet
 
 The project is available as open source under the terms of the MIT License.
 
-Copyright 2022 Vito Botta
+Copyright 2023 Vito Botta
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

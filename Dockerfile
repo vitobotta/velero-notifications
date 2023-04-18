@@ -1,4 +1,4 @@
-FROM ruby:2.7.6-slim
+FROM ruby:3.1.3-slim
 
 RUN apt-get update -qq \
   && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends build-essential git-core

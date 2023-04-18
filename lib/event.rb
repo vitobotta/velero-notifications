@@ -65,7 +65,7 @@ class Event
 
     url = ENV.fetch('WEBHOOK_URL', nil)
 
-    raise 'No webhook URL specified' if url.blank?
+    raise 'No webhook URL specified' if url.nil?
 
     uri = URI(url)
     res = Net::HTTP.get_response(uri)

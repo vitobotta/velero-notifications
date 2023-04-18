@@ -22,6 +22,8 @@ Mail.defaults do
 end
 
 class Controller
+  TIMEOUT = 3600 * 24 * 365
+
   def initialize
     @logger = Logger.new($stdout)
     @kubernetes_client = Kubernetes::Client.new
@@ -66,7 +68,7 @@ class Controller
   def watch_resources(resource_type)
     logger.info "Watching #{resource_type}..."
 
-    kubernetes_client.api('velero.io/v1').resource(resource_type.to_s, namespace:).watch(resourceVersion: resource_version[resource_type]) do |event|
+    kubernetes_client.api('velero.io/v1').resource(resource_type.to_s, namespace:).watch(timeout: TIMEOUT, resourceVersion: resource_version[resource_type]) do |event|
       Event.new(event:, logger:).notify
       resource_version[resource_type] = event.resource.metadata.resourceVersion
     end

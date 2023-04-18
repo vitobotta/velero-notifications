@@ -72,7 +72,8 @@ class Controller
       Event.new(event:, logger:).notify
       resource_version[resource_type] = event.resource.metadata.resourceVersion
     end
-  rescue EOFError, Excon::Error::Socket
+  rescue EOFError, Excon::Error::Socket => e
+    logger.info "Connection to API lost: #{e.message}"
     logger.info 'Reconnecting to API...'
     retry
   end

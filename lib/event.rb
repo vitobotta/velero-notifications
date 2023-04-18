@@ -24,8 +24,8 @@ class Event
     logger.info notification_subject
 
     send_slack_notification
-    send_email_notification
     send_webhook_notification
+    send_email_notification(notification_subject:, notification_body:)
   end
 
   def phase
@@ -75,7 +75,7 @@ class Event
     logger.error "Something went wrong with the webhook notification: #{e.message}"
   end
 
-  def send_email_notification
+  def send_email_notification(notification_subject:, notification_body:)
     return unless send_email_notification?
 
     mail = Mail.new do

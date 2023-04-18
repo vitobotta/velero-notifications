@@ -2,6 +2,7 @@ class Event
   def initialize(event:, logger:)
     @event = event
     @logger = logger
+    @notification_prefix = ENV.fetch('NOTIFICATION_PREFIX', '[Velero]')
   end
 
   def notify
@@ -12,10 +13,10 @@ class Event
 
   private
 
-  attr_reader :event, :logger
+  attr_reader :event, :logger, :notification_prefix
 
   def send_notifications
-    logger.info notification
+    logger.info notification_subject
 
     send_slack_notification
     send_email_notification

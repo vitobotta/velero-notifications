@@ -28,7 +28,6 @@ class Controller
     @logger = Logger.new($stdout)
     @kubernetes_client = Kubernetes::Client.new
     @namespace = ENV.fetch('VELERO_NAMESPACE', 'velero')
-    @notification_prefix = ENV.fetch('NOTIFICATION_PREFIX', '[Velero]')
     @resource_version = {}
     @slack_notifier = create_slack_notifier
   end
@@ -45,7 +44,7 @@ class Controller
 
   private
 
-  attr_reader :logger, :slack_notifier, :namespace, :kubernetes_client, :notification_prefix, :resource_version
+  attr_reader :logger, :slack_notifier, :namespace, :kubernetes_client, :resource_version
 
   def backups_resource_version
     kubernetes_client

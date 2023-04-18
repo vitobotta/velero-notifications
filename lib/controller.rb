@@ -66,7 +66,7 @@ class Controller
   def watch_resources(resource_type)
     logger.info "Watching #{resource_type}..."
 
-    kubernetes_client.api('velero.io/v1').resource(resource_type.to_s, namespace: velero_namespace).watch(resourceVersion: resource_version[resource_type]) do |event|
+    kubernetes_client.api('velero.io/v1').resource(resource_type.to_s, namespace:).watch(resourceVersion: resource_version[resource_type]) do |event|
       Event.new(event:, logger:).notify
       resource_version[resource_type] = event.resource.metadata.resourceVersion
     end

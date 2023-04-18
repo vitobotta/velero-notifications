@@ -1,7 +1,12 @@
+# frozen_string_literal: true
+
+require 'mail'
+
 class Event
-  def initialize(event:, logger:)
+  def initialize(event:, logger:, slack_notifier:)
     @event = event
     @logger = logger
+    @slack_notifier = slack_notifier
     @notification_prefix = ENV.fetch('NOTIFICATION_PREFIX', '[Velero]')
   end
 
@@ -13,7 +18,7 @@ class Event
 
   private
 
-  attr_reader :event, :logger, :notification_prefix
+  attr_reader :event, :logger, :notification_prefix, :slack_notifier
 
   def send_notifications
     logger.info notification_subject

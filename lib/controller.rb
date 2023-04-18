@@ -68,7 +68,7 @@ class Controller
     logger.info "Watching #{resource_type}..."
 
     kubernetes_client.api('velero.io/v1').resource(resource_type.to_s, namespace:).watch(timeout: TIMEOUT, resourceVersion: resource_version[resource_type]) do |event|
-      Event.new(event:, logger:).notify
+      Event.new(event:, logger:, slack_notifier:).notify
       resource_version[resource_type] = event.resource.metadata.resourceVersion
     end
   rescue EOFError, Excon::Error::Socket => e

@@ -2,9 +2,9 @@
 
 module Kubernetes
   class Client
-    KUBE_CONFIG = ENV.fetch('KUBE_CONFIG', '')
-    KUBE_HOST = ENV.fetch('KUBE_HOST', 'kubernetes.default.svc.cluster.local')
-    KUBE_PORT = ENV.fetch('KUBE_PORT', '443')
+    KUBE_CONFIG = ENV.fetch('KUBECONFIG', '')
+    KUBE_HOST = ENV.fetch('KUBEHOST', 'kubernetes.default.svc.cluster.local')
+    KUBE_PORT = ENV.fetch('KUBEPORT', '443')
 
     def initialize
       @client = if KUBE_CONFIG.empty?

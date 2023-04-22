@@ -21,6 +21,8 @@ spec:
           env:
             - name: VELERO_NAMESPACE
               value: {{ .Values.velero_namespace | quote }}
+            - name: RELEASE_NAMESPACE
+              value: {{ .Release.Namespace }}
             - name: NOTIFICATION_PREFIX
               value: {{ .Values.notification_prefix | quote }}
             - name: ENABLE_SLACK_NOTIFICATIONS

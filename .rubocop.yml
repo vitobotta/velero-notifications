@@ -15,3 +15,6 @@ Metrics/MethodLength:
 
 Metrics/ClassLength:
   Enabled: false
+
+Layout/MultilineMethodCallIndentation:
+  Enabled: false

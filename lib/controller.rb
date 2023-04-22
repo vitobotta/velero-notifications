@@ -28,7 +28,7 @@ class Controller
     @logger = Logger.new($stdout)
     @kubernetes_client = Kubernetes::Client.new
     @namespace = ENV.fetch('VELERO_NAMESPACE', 'velero')
-    @resource_versions = {}
+    @resource_version = 0
     @slack_notifier = create_slack_notifier
     @release_namespace = ENV.fetch('RELEASE_NAMESPACE', 'velero')
   end
@@ -36,50 +36,51 @@ class Controller
   def start
     $stdout.sync = true
 
-    Thread.new { watch_resources :backups }.join
-    Thread.new { watch_resources :restores }.join
+    watch_backups
   end
 
   private
 
-  attr_reader :logger, :slack_notifier, :namespace, :kubernetes_client, :resource_versions, :release_namespace
+  attr_reader :logger, :slack_notifier, :namespace, :kubernetes_client, :resource_version, :release_namespace
 
-  def last_resource_version(resource_type)
-    resource_version = kubernetes_client.api('v1').resource('configmaps', namespace:).get("#{resource_type}-last-resource-version").data['resource-version']
+  def last_resource_version
+    @resource_version = kubernetes_client
+      .api('v1')
+      .resource('configmaps', namespace:)
+      .get('backups-last-resource-version')
+      .data['resource-version']
 
-    return resource_version if resource_version && resource_version != '0'
+    return @resource_version if @resource_version && @resource_version != '0'
 
-    resource_version = kubernetes_client
+    @resource_version = kubernetes_client
       .api('velero.io/v1')
-      .resource(resource_type.to_s, namespace:)
+      .resource('backups', namespace:)
       .meta_list
       .metadata
       .resourceVersion
+      .to_s
 
-    update_last_resource_version(resource_type, resource_version)
+    update_configmap
 
-    resource_version
+    @resource_version
   end
 
-  def watch_resources(resource_type)
-    resource_versions[:backups] = last_resource_version(:backups)
+  def watch_backups
+    @resource_version = last_resource_version
 
-    logger.info "Watching #{resource_type} (current resource version #{resource_versions[:backups]})..."
+    logger.info "Watching backups (current resource version #{resource_version})..."
 
-    kubernetes_client.api('velero.io/v1').resource(resource_type.to_s, namespace:).watch(timeout: TIMEOUT, resourceVersion: resource_versions[resource_type]) do |event|
+    kubernetes_client.api('velero.io/v1').resource('backups', namespace:).watch(timeout: TIMEOUT, resourceVersion: resource_version) do |event|
       Event.new(event:, logger:, slack_notifier:).notify
 
-      resource_version = event.resource.metadata.resourceVersion
-
-      logger.info "Resource version for #{resource_type}: #{resource_version}"
-      resource_versions[resource_type] = resource_version
-      update_last_resource_version(resource_type, resource_version)
+      @resource_version = event.resource.metadata.resourceVersion
+      update_configmap
     end
   rescue EOFError, Excon::Error::Socket => e
     logger.info "Connection to API lost: #{e.message}"
     logger.info 'Reconnecting to API...'
 
-    resource_versions[:backups] = last_resource_version(:backups)
+    @resource_version = last_resource_version
 
     retry
   end
@@ -90,13 +91,15 @@ class Controller
     end
   end
 
-  def update_last_resource_version(resource_type, resource_version)
+  def update_configmap
+    logger.info "Resource version for backups: #{resource_version}"
+
     patch = {
       data: {
         'resource-version': resource_version.to_s
       }
     }
 
-    kubernetes_client.api('v1').resource('configmaps', namespace:).merge_patch("#{resource_type}-last-resource-version", patch)
+    kubernetes_client.api('v1').resource('configmaps', namespace:).merge_patch('backups-last-resource-version', patch)
   end
 end

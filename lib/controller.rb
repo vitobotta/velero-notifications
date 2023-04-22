@@ -97,6 +97,6 @@ class Controller
       }
     }
 
-    kubernetes_client.api('v1').resource('configmaps', namespace:).merge_patch("#{resource_type.to_s}-last-resource-version", patch)
+    kubernetes_client.api('v1').resource('configmaps', namespace:).merge_patch("#{resource_type}-last-resource-version", patch)
   end
 end

@@ -21,7 +21,11 @@ Mail.defaults do
                   password: ENV.fetch('EMAIL_SMTP_PASSWORD', nil)
 end
 
+class ResourceExpiredError < StandardError
+end
+
 class Controller
+
   TIMEOUT = 3600 * 24 * 365
 
   def initialize
@@ -43,14 +47,16 @@ class Controller
 
   attr_reader :logger, :slack_notifier, :namespace, :kubernetes_client, :resource_version, :release_namespace
 
-  def last_resource_version
-    @resource_version = kubernetes_client
-      .api('v1')
-      .resource('configmaps', namespace:)
-      .get('backups-last-resource-version')
-      .data['resource-version']
+  def last_resource_version(reset: false)
+    unless reset
+      @resource_version = kubernetes_client
+        .api('v1')
+        .resource('configmaps', namespace:)
+        .get('backups-last-resource-version')
+        .data['resource-version']
 
-    return @resource_version if @resource_version && @resource_version != '0'
+      return @resource_version if @resource_version && @resource_version != '0'
+    end
 
     @resource_version = kubernetes_client
       .api('velero.io/v1')
@@ -71,16 +77,19 @@ class Controller
     logger.info "Watching backups (current resource version #{resource_version})..."
 
     kubernetes_client.api('velero.io/v1').resource('backups', namespace:).watch(timeout: TIMEOUT, resourceVersion: resource_version) do |event|
+      raise ResourceExpiredError if event.resource.reason =~ /expired/i
+
+      logger.info event.inspect
       Event.new(event:, logger:, slack_notifier:).notify
 
       @resource_version = event.resource.metadata.resourceVersion
       update_configmap
     end
-  rescue EOFError, Excon::Error::Socket => e
+  rescue ResourceExpiredError, EOFError, Excon::Error::Socket => e
     logger.info "Connection to API lost: #{e.message}"
     logger.info 'Reconnecting to API...'
 
-    @resource_version = last_resource_version
+    @resource_version = last_resource_version(reset: true)
 
     retry
   end

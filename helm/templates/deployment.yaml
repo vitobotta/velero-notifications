@@ -14,6 +14,15 @@ spec:
         app: velero-backup-notification
     spec:
       serviceAccountName: velero
+      initContainers:
+        - name: "fix-max-user-watches"
+          image: busybox:1.28
+          command:
+            - sh
+            - -c
+            - sysctl net.ipv4.tcp_keepalive_time=10 net.ipv4.tcp_keepalive_intvl=5 net.ipv4.tcp_keepalive_probes=3
+          securityContext:
+            privileged: true
       containers:
         - name: velero-backup-notification
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}

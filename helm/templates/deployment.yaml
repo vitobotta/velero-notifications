@@ -15,7 +15,7 @@ spec:
     spec:
       serviceAccountName: velero
       initContainers:
-        - name: "fix-max-user-watches"
+        - name: "fix-keepalive"
           image: busybox:1.28
           command:
             - sh

@@ -38,7 +38,7 @@ class Event
   end
 
   def notification_subject
-    @notification_subject ||= "#{notification_prefix} Backup #{backup_name} #{phase} #{phase == "Completed" ? "✅" : "❌"}}"
+    @notification_subject ||= "#{notification_prefix} Backup #{backup_name} #{phase} #{phase == "Completed" ? "✅" : "❌"}"
   end
 
   def notification_body

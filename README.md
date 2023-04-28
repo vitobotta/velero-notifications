@@ -10,7 +10,7 @@
 ![GitHub forks](https://img.shields.io/github/forks/vitobotta/velero-notifications?style=social)
 ![GitHub Repo stars](https://img.shields.io/github/stars/vitobotta/velero-notifications?style=social)
 
----
+
 
 # velero-notifications
 
@@ -50,11 +50,12 @@ helm upgrade --install \
 That's it! You should now receive notifications when a backup is completed or fails. It couldn't be simpler than that!
 
 
----
+
 ## License
 
 [MIT License](https://github.com/vitobotta/velero-notifications/blob/main/LICENSE)
----
+
+
 
 ## Stargazers over time
 

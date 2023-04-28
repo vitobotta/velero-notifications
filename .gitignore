@@ -1,0 +1,17 @@
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+
+/docs/
+/lib/
+/bin/
+/.shards/
+*.dwarf
+velerno-notifications
+actions-runner
+velero-notifications

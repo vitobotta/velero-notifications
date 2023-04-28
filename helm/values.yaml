@@ -1,6 +1,6 @@
 image:
   repository: vitobotta/velero-backup-notification
-  tag: v1.0.3
+  tag: v1.0.4
 
 slack:
   enabled: false

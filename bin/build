@@ -4,6 +4,7 @@ docker run -d --name alpine --platform=linux/amd64 -v $(pwd):/workspace -w /work
 docker exec alpine shards install --without-development
 docker exec alpine crystal build src/velero-notifications.cr --release --static
 docker stop alpine
+docker rm alpine
 
 IMAGE="vitobotta/velero-backup-notification"
 VERSION="$(git describe --tags --abbrev=0)"

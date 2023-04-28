@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: backups-last-resource-version
 data:
-  resource-version: "0"
+  resourceVersion: "0"
 

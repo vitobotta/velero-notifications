@@ -1,0 +1,30 @@
+version: 2.0
+shards:
+  db:
+    git: https://github.com/crystal-lang/crystal-db.git
+    version: 0.11.0
+
+  email:
+    git: https://github.com/arcage/crystal-email.git
+    version: 0.7.0
+
+  hashdiff:
+    git: https://github.com/spoved/hashdiff.cr.git
+    version: 1.0.2
+
+  k8s:
+    git: https://github.com/spoved/k8s.cr.git
+    version: 0.1.10
+
+  kube-client:
+    git: https://github.com/spoved/kube-client.cr.git
+    version: 0.4.6
+
+  retriable:
+    git: https://github.com/sija/retriable.cr.git
+    version: 0.2.4
+
+  spoved:
+    git: https://github.com/spoved/spoved.cr.git
+    version: 0.8.6
+

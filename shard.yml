@@ -1,0 +1,22 @@
+name: velero-notifications
+version: 0.1.0
+
+authors:
+  - Vito Botta <vito@botta.me>
+
+targets:
+  velero-notifications:
+    main: src/velero-notifications.cr
+
+crystal: 1.8.1
+
+license: MIT
+
+dependencies:
+  kube-client:
+    github: spoved/kube-client.cr
+  retriable:
+    git: https://github.com/sija/retriable.cr.git
+    version: 0.2.4
+  email:
+    github: arcage/crystal-email

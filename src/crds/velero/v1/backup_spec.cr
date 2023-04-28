@@ -1,0 +1,35 @@
+# THIS FILE WAS AUTO GENERATED FROM THE K8S SWAGGER SPEC
+
+require "yaml"
+require "json"
+
+::K8S::Kubernetes::Resource.define_object("BackupSpec",
+  namespace: "::K8S::Velero::V1",
+  properties: [
+
+    {name: "csi_snapshot_timeout", kind: String, key: "csiSnapshotTimeout", nilable: true, read_only: false, description: "CSISnapshotTimeout specifies the time used to wait for CSI VolumeSnapshot status turns to ReadyToUse during creation, before returning error as timeout. The default value is 10 minute."},
+    {name: "default_volumes_to_fs_backup", kind: ::Bool, key: "defaultVolumesToFsBackup", nilable: true, read_only: false, description: "DefaultVolumesToFsBackup specifies whether pod volume file system backup should be used for all volumes by default."},
+    {name: "default_volumes_to_restic", kind: ::Bool, key: "defaultVolumesToRestic", nilable: true, read_only: false, description: "DefaultVolumesToRestic specifies whether restic should be used to take a backup of all pod volumes by default. \n Deprecated: this field is no longer used and will be removed entirely in future. Use DefaultVolumesToFsBackup instead."},
+    {name: "excluded_cluster_scoped_resources", kind: ::Array(String), key: "excludedClusterScopedResources", nilable: true, read_only: false, description: "ExcludedClusterScopedResources is a slice of cluster-scoped resource type names to exclude from the backup. If set to \"*\", all cluster-scoped resource types are excluded. The default value is empty."},
+    {name: "excluded_namespace_scoped_resources", kind: ::Array(String), key: "excludedNamespaceScopedResources", nilable: true, read_only: false, description: "ExcludedNamespaceScopedResources is a slice of namespace-scoped resource type names to exclude from the backup. If set to \"*\", all namespace-scoped resource types are excluded. The default value is empty."},
+    {name: "excluded_namespaces", kind: ::Array(String), key: "excludedNamespaces", nilable: true, read_only: false, description: "ExcludedNamespaces contains a list of namespaces that are not included in the backup."},
+    {name: "excluded_resources", kind: ::Array(String), key: "excludedResources", nilable: true, read_only: false, description: "ExcludedResources is a slice of resource names that are not included in the backup."},
+    {name: "hooks", kind: Union(::Hash(String, ::Array(::Hash(String, ::Array(String) | ::Hash(String, ::Array(::Hash(String, String | ::Array(String))) | ::Hash(String, String)) | String | ::Array(::Hash(String, ::Hash(String, ::Array(String) | String))))))), key: "hooks", nilable: true, read_only: false, description: "Hooks represent custom behaviors that should be executed at different phases of the backup."},
+    {name: "include_cluster_resources", kind: ::Bool, key: "includeClusterResources", nilable: true, read_only: false, description: "IncludeClusterResources specifies whether cluster-scoped resources should be included for consideration in the backup."},
+    {name: "included_cluster_scoped_resources", kind: ::Array(String), key: "includedClusterScopedResources", nilable: true, read_only: false, description: "IncludedClusterScopedResources is a slice of cluster-scoped resource type names to include in the backup. If set to \"*\", all cluster-scoped resource types are included. The default value is empty, which means only related cluster-scoped resources are included."},
+    {name: "included_namespace_scoped_resources", kind: ::Array(String), key: "includedNamespaceScopedResources", nilable: true, read_only: false, description: "IncludedNamespaceScopedResources is a slice of namespace-scoped resource type names to include in the backup. The default value is \"*\"."},
+    {name: "included_namespaces", kind: ::Array(String), key: "includedNamespaces", nilable: true, read_only: false, description: "IncludedNamespaces is a slice of namespace names to include objects from. If empty, all namespaces are included."},
+    {name: "included_resources", kind: ::Array(String), key: "includedResources", nilable: true, read_only: false, description: "IncludedResources is a slice of resource names to include in the backup. If empty, all resources are included."},
+    {name: "item_operation_timeout", kind: String, key: "itemOperationTimeout", nilable: true, read_only: false, description: "ItemOperationTimeout specifies the time used to wait for asynchronous BackupItemAction operations The default value is 1 hour."},
+    {name: "label_selector", kind: Union(::Hash(String, ::Array(::Hash(String, String | ::Array(String))) | ::Hash(String, String))), key: "labelSelector", nilable: true, read_only: false, description: "LabelSelector is a metav1.LabelSelector to filter with when adding individual objects to the backup. If empty or nil, all objects are included. Optional."},
+    {name: "metadata", kind: ::Hash(String, ::Hash(String, String)), key: "metadata", nilable: true, read_only: false, description: nil},
+    {name: "or_label_selectors", kind: Union(::Array(::Hash(String, ::Array(::Hash(String, String | ::Array(String))) | ::Hash(String, String)))), key: "orLabelSelectors", nilable: true, read_only: false, description: "OrLabelSelectors is list of metav1.LabelSelector to filter with when adding individual objects to the backup. If multiple provided they will be joined by the OR operator. LabelSelector as well as OrLabelSelectors cannot co-exist in backup request, only one of them can be used."},
+    {name: "ordered_resources", kind: ::Hash(String, String), key: "orderedResources", nilable: true, read_only: false, description: "OrderedResources specifies the backup order of resources of specific Kind. The map key is the resource name and value is a list of object names separated by commas. Each resource name has format [\"namespace/objectname\".  For cluster resources, simply use \"objectname\".](\"namespace/objectname\".  For cluster resources, simply use \"objectname\".)"},
+    {name: "resource_policy", kind: ::Hash(String, String), key: "resourcePolicy", nilable: true, read_only: false, description: "ResourcePolicy specifies the referenced resource policies that backup should follow"},
+    {name: "snapshot_volumes", kind: ::Bool, key: "snapshotVolumes", nilable: true, read_only: false, description: "SnapshotVolumes specifies whether to take snapshots of any PV's referenced in the set of objects included in the Backup."},
+    {name: "storage_location", kind: String, key: "storageLocation", nilable: true, read_only: false, description: "StorageLocation is a string containing the name of a BackupStorageLocation where the backup should be stored."},
+    {name: "ttl", kind: String, key: "ttl", nilable: true, read_only: false, description: "TTL is a time.Duration-parseable string describing how long the Backup should be retained for."},
+    {name: "volume_snapshot_locations", kind: ::Array(String), key: "volumeSnapshotLocations", nilable: true, read_only: false, description: "VolumeSnapshotLocations is a list containing names of VolumeSnapshotLocations associated with this backup."},
+
+  ]
+)

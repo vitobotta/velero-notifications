@@ -1,10 +1,7 @@
 #!/bin/bash
 
-docker run -d --name alpine --platform=linux/amd64 -v $(pwd):/workspace -w /workspace crystallang/crystal:latest-alpine tail -f /dev/null
-docker exec alpine shards install --without-development
-docker exec alpine crystal build src/velero-notifications.cr --release --static
-docker stop alpine
-docker rm alpine
+docker run --rm -it --platform=linux/amd64 -v $(pwd):/workspace -w /workspace crystallang/crystal:latest-alpine crystal build src/velero-notifications.cr --static
+
 
 IMAGE="vitobotta/velero-backup-notification"
 VERSION="$(git describe --tags --abbrev=0)"
@@ -12,4 +9,3 @@ VERSION="$(git describe --tags --abbrev=0)"
 docker build --platform=linux/amd64 -t ${IMAGE}:${VERSION} .
 
 docker push ${IMAGE}:${VERSION}
-

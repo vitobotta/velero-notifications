@@ -14,7 +14,7 @@
 
 # velero-notifications
 
-This is a simple Kubernetes controller written in Ruby that sends email/Slack/webhook notifications when backups are performed by [Velero](https://velero.io/) in a [Kubernetes](https://kubernetes.io/) cluster.
+This is a simple Kubernetes controller written in Crystal that sends email/Slack/webhook notifications when backups are performed by [Velero](https://velero.io/) in a [Kubernetes](https://kubernetes.io/) cluster.
 
 
 

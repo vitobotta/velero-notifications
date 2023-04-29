@@ -49,7 +49,7 @@ helm upgrade --install \
 
 That's it! You should now receive notifications when a backup is completed or fails. It couldn't be simpler than that!
 
-![Screenshot](screenshot.jpg?raw=true "Screenshot")
+![Screenshot](screenshot.png?raw=true "Screenshot")
 
 ## License
 

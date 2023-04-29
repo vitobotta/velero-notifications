@@ -7,9 +7,6 @@ require "./crds/velero/v1/backup"
 require "./crds/velero/v1/backup_list"
 require "./event"
 
-class APIError < Exception
-end
-
 class Controller
   private getter api_client : Kube::Client
   private getter velero_namespace : String
@@ -24,7 +21,7 @@ class Controller
   end
 
   def run
-    Retriable.retry(on: APIError, backoff: false) do
+    Retriable.retry(on: [Exception], backoff: false) do
       watch_backups
     end
   end
@@ -73,20 +70,19 @@ class Controller
 
     Log.info { "Watching backups from resource version #{resource_version}" }
 
-    resource_client = api_client.api("velero.io/v1").resource("backups", namespace: velero_namespace)
-    channel = resource_client.watch(resource_version: resource_version)
+    watch_channel = api_client.
+      api("velero.io/v1").
+      resource("backups", namespace: velero_namespace).
+      watch(resource_version: resource_version)
 
-    until channel.closed?
-      event = channel.receive
+    until watch_channel.closed?
+      event = watch_channel.receive
 
-      if event.is_a?(Kube::Error::API)
-        channel.close
-        raise APIError.new(message = "API error")
-      elsif event.is_a? K8S::Kubernetes::WatchEvent(K8S::Velero::V1::Backup)
-        Event.new(event).notify
-        @resource_version = event.object["metadata"].as(Hash)["resourceVersion"].to_s
-        update_configmap
-      end
+      next unless event.is_a? K8S::Kubernetes::WatchEvent(K8S::Velero::V1::Backup)
+
+      Event.new(event).notify
+      @resource_version = event.object["metadata"].as(Hash)["resourceVersion"].to_s
+      update_configmap
     end
   end
 

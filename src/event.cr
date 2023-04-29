@@ -50,7 +50,7 @@ class Event
 
     succeeded = (phase =~ /failed/i).nil?
     failures_only = ENV.fetch("#{notification_type.to_s.upcase}_FAILURES_ONLY", "false").downcase == "true"
-p [notification_type, enabled, succeeded, failures_only]
+
     enabled && (!failures_only || !(failures_only && succeeded))
   end
 

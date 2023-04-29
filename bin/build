@@ -6,6 +6,7 @@ docker run --rm -it --platform=linux/amd64 -v $(pwd):/workspace -w /workspace cr
 IMAGE="vitobotta/velero-backup-notification"
 VERSION="$(git describe --tags --abbrev=0)"
 
-docker build --platform=linux/amd64 -t ${IMAGE}:${VERSION} .
+docker buildx create --name=buildkit-velero-notifications --use > /dev/null 2>&1 || true
+docker buildx build --platform=linux/amd64,linux/arm64 -t ${IMAGE}:${VERSION} .
 
 docker push ${IMAGE}:${VERSION}

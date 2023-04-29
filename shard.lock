@@ -14,11 +14,11 @@ shards:
 
   k8s:
     git: https://github.com/spoved/k8s.cr.git
-    version: 0.1.10
+    version: 0.1.11
 
   kube-client:
     git: https://github.com/spoved/kube-client.cr.git
-    version: 0.4.6
+    version: 0.4.6+git.commit.8778313a458f239376c7f05896a79fd8414e4139
 
   retriable:
     git: https://github.com/sija/retriable.cr.git

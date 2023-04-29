@@ -70,19 +70,23 @@ class Controller
 
     Log.info { "Watching backups from resource version #{resource_version}" }
 
-    watch_channel = api_client.
+    resource_client = api_client.
       api("velero.io/v1").
-      resource("backups", namespace: velero_namespace).
-      watch(resource_version: resource_version)
+      resource("backups", namespace: velero_namespace)
 
-    until watch_channel.closed?
-      event = watch_channel.receive
+    resource_client.watch(resource_version: resource_version, auto_resume: true) do |event|
+      if event.is_a?(Kube::Error::WatchClosed)
+        if event.resource_version
+          @resource_version = event.resource_version.not_nil!
+          update_configmap
+        end
 
-      next unless event.is_a? K8S::Kubernetes::WatchEvent(K8S::Velero::V1::Backup)
-
-      Event.new(event).notify
-      @resource_version = event.object["metadata"].as(Hash)["resourceVersion"].to_s
-      update_configmap
+        channel = resource_client.watch(resource_version: event.resource_version)
+      elsif event.is_a?(K8S::Kubernetes::WatchEvent(K8S::Velero::V1::Backup))
+        Event.new(event).notify
+        @resource_version = event.object["metadata"].as(Hash)["resourceVersion"].to_s
+        update_configmap
+      end
     end
   end
 

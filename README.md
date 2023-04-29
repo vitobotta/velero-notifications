@@ -16,7 +16,7 @@
 
 This is a simple Kubernetes controller written in Crystal that sends Email/Slack/webhook notifications when backups are performed by [Velero](https://velero.io/) in a [Kubernetes](https://kubernetes.io/) cluster.
 
-
+![Screenshot](slack.png?raw=true "Screenshot")
 
 ## Installation
 
@@ -49,7 +49,7 @@ helm upgrade --install \
 
 That's it! You should now receive notifications when a backup is completed or fails. It couldn't be simpler than that!
 
-![Screenshot](slack.png?raw=true "Screenshot")
+
 
 ## License
 

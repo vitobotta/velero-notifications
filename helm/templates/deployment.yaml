@@ -5,6 +5,8 @@ metadata:
   namespace: velero
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: velero-backup-notification
@@ -26,7 +28,7 @@ spec:
       containers:
         - name: velero-backup-notification
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           env:
             - name: VELERO_NAMESPACE
               value: {{ .Values.velero_namespace | quote }}

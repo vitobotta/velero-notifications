@@ -1,12 +1,11 @@
 #!/bin/bash
 
-docker run --rm -it --platform=linux/amd64 -v $(pwd):/workspace -w /workspace crystallang/crystal:latest-alpine crystal build src/velero-notifications.cr --static
+# docker run --rm -it --platform=linux/amd64 -v $(pwd):/workspace -w /workspace crystallang/crystal:latest-alpine crystal build src/velero-notifications.cr --static
 
 
 IMAGE="vitobotta/velero-backup-notification"
 VERSION="$(git describe --tags --abbrev=0)"
 
-docker buildx create --name=buildkit-velero-notifications --use > /dev/null 2>&1 || true
-docker buildx build --platform=linux/amd64,linux/arm64 -t ${IMAGE}:${VERSION} .
+docker build --platform=linux -t ${IMAGE}:${VERSION} .
 
 docker push ${IMAGE}:${VERSION}

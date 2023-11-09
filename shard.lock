@@ -2,7 +2,7 @@ version: 2.0
 shards:
   db:
     git: https://github.com/crystal-lang/crystal-db.git
-    version: 0.11.0
+    version: 0.12.0
 
   email:
     git: https://github.com/arcage/crystal-email.git
@@ -14,11 +14,11 @@ shards:
 
   k8s:
     git: https://github.com/spoved/k8s.cr.git
-    version: 0.1.11
+    version: 0.1.12
 
   kube-client:
     git: https://github.com/spoved/kube-client.cr.git
-    version: 0.4.6+git.commit.8778313a458f239376c7f05896a79fd8414e4139
+    version: 0.4.8
 
   retriable:
     git: https://github.com/sija/retriable.cr.git

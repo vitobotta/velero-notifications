@@ -52,6 +52,15 @@ spec:
                 secretKeyRef:
                   key: slack_channel
                   name: velero-backup-notification-secrets
+            - name: ENABLE_DISCORD_NOTIFICATIONS
+              value: {{ .Values.discord.enabled | quote }}
+            - name: DISCORD_FAILURES_ONLY
+              value: {{ .Values.discord.failures_only | quote }}
+            - name: DISCORD_WEBHOOK
+              valueFrom:
+                secretKeyRef:
+                  key: discord_webhook
+                  name: velero-backup-notification-secrets
             - name: ENABLE_EMAIL_NOTIFICATIONS
               value: {{ .Values.email.enabled | quote }}
             - name: EMAIL_FAILURES_ONLY

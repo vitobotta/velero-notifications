@@ -38,6 +38,9 @@ helm upgrade --install \
   --set discord.enabled=true \
   --set discord.failures_only=false \
   --set discord.webhook=https://... \
+  --set discord.mentions.enabled=false \
+  --set discord.mentions.failures_only=true \
+  --set discord.mentions.role_id="1234567890" \
   --set email.enabled=true \
   --set email.failures_only=true \
   --set email.smtp.host=... \

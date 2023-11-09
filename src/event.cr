@@ -5,6 +5,9 @@ require "email"
 class Event
   SLACK_WEBHOOK = ENV.fetch("SLACK_WEBHOOK", "")
   DISCORD_WEBHOOK = ENV.fetch("DISCORD_WEBHOOK", "")
+  ENABLE_DISCORD_MENTIONS = ENV.fetch("ENABLE_DISCORD_MENTIONS", "false").downcase
+  DISCORD_MENTIONS_FAILURES_ONLY = ENV.fetch("DISCORD_MENTIONS_FAILURES_ONLY", "false").downcase
+  DISCORD_MENTIONS_ROLE_ID = ENV.fetch("DISCORD_MENTIONS_ROLE_ID", "")
   EMAIL_SMTP_HOST = ENV.fetch("EMAIL_SMTP_HOST", "")
   EMAIL_SMTP_PORT = ENV.fetch("EMAIL_SMTP_PORT", "")
   EMAIL_SMTP_USERNAME = ENV.fetch("EMAIL_SMTP_USERNAME", "")
@@ -94,6 +97,18 @@ class Event
     if DISCORD_WEBHOOK.blank?
       Log.info { "Ensure the DISCORD_WEBHOOK environment variable is set" }
       raise Exception.new("Discord configuration missing")
+    end
+
+    if ENABLE_DISCORD_MENTIONS == "true"
+      if DISCORD_MENTIONS_ROLE_ID.blank?
+        Log.info { "Ensure the DISCORD_MENTIONS_ROLE_ID environment variable is set" }
+        raise Exception.new("Discord mentions configuration missing")
+      end
+
+      failures_only = DISCORD_MENTIONS_FAILURES_ONLY == "true"
+      succeeded = phase == "Completed"
+
+      notification_body = !failures_only || succeeded ? "#{notification_body} <@&#{DISCORD_MENTIONS_ROLE_ID}>" : notification_body
     end
 
     color = phase == "Completed" ? 0x36a64f : 0xa30202

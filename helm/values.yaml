@@ -1,5 +1,5 @@
 image:
-  repository: woutthenines/velero-backup-notifications
+  repository: woutthenines/velero-backup-notification
   tag: v1.0.1
 
 slack:

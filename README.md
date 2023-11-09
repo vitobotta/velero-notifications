@@ -14,7 +14,7 @@
 
 # velero-notifications
 
-This is a simple Kubernetes controller written in Crystal that sends Email/Slack/webhook notifications when backups are performed by [Velero](https://velero.io/) in a [Kubernetes](https://kubernetes.io/) cluster.
+This is a simple Kubernetes controller written in Crystal that sends Email/Slack/Discord/webhook notifications when backups are performed by [Velero](https://velero.io/) in a [Kubernetes](https://kubernetes.io/) cluster.
 
 ![Screenshot](slack.png?raw=true "Screenshot")
 
@@ -35,6 +35,9 @@ helm upgrade --install \
   --set slack.webhook=https://... \
   --set slack.channel=velero \
   --set slack.username=Velero \
+  --set discord.enabled=true \
+  --set discord.failures_only=false \
+  --set discord.webhook=https://... \
   --set email.enabled=true \
   --set email.failures_only=true \
   --set email.smtp.host=... \

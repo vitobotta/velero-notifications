@@ -108,11 +108,12 @@ class Event
       failures_only = DISCORD_MENTIONS_FAILURES_ONLY == "true"
       succeeded = phase == "Completed"
 
-      notification_body = !failures_only || succeeded ? "#{notification_body} <@&#{DISCORD_MENTIONS_ROLE_ID}>" : notification_body
+      notification_mention = !failures_only || (failures_only && !succeeded) ? "<@&#{DISCORD_MENTIONS_ROLE_ID}>" : nil
     end
 
     color = phase == "Completed" ? 0x36a64f : 0xa30202
     payload = {
+      "content" => notification_mention.nil? ? "" : notification_mention,
       "embeds" => [
         {
         "title" => notification_subject,  

@@ -18,6 +18,8 @@ This is a simple Kubernetes controller written in Crystal that sends Email/Slack
 
 ![Screenshot](slack.png?raw=true "Screenshot")
 
+![Screenshot](discord.png?raw=true "Screenshot")
+
 If you like this or any of my other projects and would like to help with their development, consider [becoming a sponsor](https://github.com/sponsors/vitobotta).
 
 ## Installation

@@ -4,6 +4,10 @@ require "email"
 
 class Event
   SLACK_WEBHOOK = ENV.fetch("SLACK_WEBHOOK", "")
+  DISCORD_WEBHOOK = ENV.fetch("DISCORD_WEBHOOK", "")
+  ENABLE_DISCORD_MENTIONS = ENV.fetch("ENABLE_DISCORD_MENTIONS", "false").downcase
+  DISCORD_MENTIONS_FAILURES_ONLY = ENV.fetch("DISCORD_MENTIONS_FAILURES_ONLY", "false").downcase
+  DISCORD_MENTIONS_ROLE_ID = ENV.fetch("DISCORD_MENTIONS_ROLE_ID", "")
   EMAIL_SMTP_HOST = ENV.fetch("EMAIL_SMTP_HOST", "")
   EMAIL_SMTP_PORT = ENV.fetch("EMAIL_SMTP_PORT", "")
   EMAIL_SMTP_USERNAME = ENV.fetch("EMAIL_SMTP_USERNAME", "")
@@ -25,6 +29,7 @@ class Event
     Log.info { notification_subject }
 
     send_slack_notification if send_slack_notification?
+    send_discord_notification if send_discord_notification?
     send_email_notification if send_email_notification?
     send_webhook_notification if send_webhook_notification?
   end
@@ -78,6 +83,48 @@ class Event
 
     HTTP::Client.post(
       SLACK_WEBHOOK,
+      headers: HTTP::Headers{"Content-type" => "application/json"},
+      body: payload
+    )
+  end
+
+  def send_discord_notification?
+    send_notification?(:discord)
+  end
+
+  # Add a method to send notifications to Discord
+  def send_discord_notification
+    if DISCORD_WEBHOOK.blank?
+      Log.info { "Ensure the DISCORD_WEBHOOK environment variable is set" }
+      raise Exception.new("Discord configuration missing")
+    end
+
+    if ENABLE_DISCORD_MENTIONS == "true"
+      if DISCORD_MENTIONS_ROLE_ID.blank?
+        Log.info { "Ensure the DISCORD_MENTIONS_ROLE_ID environment variable is set" }
+        raise Exception.new("Discord mentions configuration missing")
+      end
+
+      failures_only = DISCORD_MENTIONS_FAILURES_ONLY == "true"
+      succeeded = phase == "Completed"
+
+      notification_mention = !failures_only || (failures_only && !succeeded) ? "<@&#{DISCORD_MENTIONS_ROLE_ID}>" : nil
+    end
+
+    color = phase == "Completed" ? 0x36a64f : 0xa30202
+    payload = {
+      "content" => notification_mention.nil? ? "" : notification_mention,
+      "embeds" => [
+        {
+        "title" => notification_subject,  
+        "description" => notification_body,
+        "color" => color
+        }
+      ]
+    }.to_json
+
+    HTTP::Client.post(
+      DISCORD_WEBHOOK,
       headers: HTTP::Headers{"Content-type" => "application/json"},
       body: payload
     )
@@ -138,4 +185,3 @@ class Event
     HTTP::Client.get(WEBHOOK_URL)
   end
 end
-

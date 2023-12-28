@@ -1,6 +1,6 @@
 image:
-  repository: vitobotta/velero-backup-notification
-  tag: v1.0.0
+  repository: woutthenines/velero-backup-notification
+  tag: v1.0.3
 
 slack:
   enabled: false
@@ -8,6 +8,15 @@ slack:
   webhook: "https://...."
   channel: "stuff"
   username: Velero
+
+discord:
+  enabled: false
+  failures_only: true
+  webhook: "https://...."
+  mentions:
+    enabled: false
+    failures_only: true
+    role_id: "1234567890"
 
 email:
   enabled: false

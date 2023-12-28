@@ -1,5 +1,5 @@
 require "log"
-require "kube-client/v1.26"
+require "kube-client/v1.28"
 require "retriable"
 require "./crds/velero/v1/backup_spec"
 require "./crds/velero/v1/backup_status"

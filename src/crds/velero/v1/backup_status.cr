@@ -17,6 +17,7 @@ require "json"
     {name: "expiration", kind: String, key: "expiration", nilable: true, read_only: false, description: "Expiration is when this Backup is eligible for garbage-collection."},
     {name: "failure_reason", kind: String, key: "failureReason", nilable: true, read_only: false, description: "FailureReason is an error that caused the entire backup to fail."},
     {name: "format_version", kind: String, key: "formatVersion", nilable: true, read_only: false, description: "FormatVersion is the backup format version, including major, minor, and patch version."},
+    {name: "hook_status", kind: ::Hash(String, Int32), key: "hookStatus", nilable: true, read_only: false, description: "HookStatus contains information about the status of the hooks."},
     {name: "phase", kind: String, key: "phase", nilable: true, read_only: false, description: "Phase is the current state of the Backup."},
     {name: "progress", kind: ::Hash(String, Int32), key: "progress", nilable: true, read_only: false, description: "Progress contains information about the backup's execution progress. Note that this information is best-effort only -- if Velero fails to update it during a backup for any reason, it may be [inaccurate/stale.](inaccurate/stale.)"},
     {name: "start_timestamp", kind: String, key: "startTimestamp", nilable: true, read_only: false, description: "StartTimestamp records the time a backup was started. Separate from CreationTimestamp, since that value changes on restores. The server's time is used for StartTimestamps"},
